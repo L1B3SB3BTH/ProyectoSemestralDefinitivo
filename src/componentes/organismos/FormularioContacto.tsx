@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Boton } from '../atomos/Boton'
 import { CampoFormulario } from '../moleculas/CampoFormulario'
 import { TarjetaFormulario } from '../moleculas/TarjetaFormulario'
+import { esCorreoValido } from '../../utilidades'
 
 export function FormularioContacto() {
   // Estado para guardar los datos del formulario
@@ -23,7 +24,7 @@ export function FormularioContacto() {
     }
 
     // Comprobamos que el correo tenga formato válido
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.trim())) {
+    if (!esCorreoValido(correo)) {
       alert('El correo no es válido')
       return
     }

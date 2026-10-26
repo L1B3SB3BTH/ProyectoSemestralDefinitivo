@@ -1,17 +1,23 @@
-//@vitest-environments jsdom
-import { test, expect,vi } from "vitest";
-import {render,screen,fireEvent} from "@testing-library/react";
-import {MemoryRouter} from "react-router-dom";
+// @vitest-environment jsdom
+import { test, expect, vi } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach } from "vitest";
 import { Boton } from "../componentes/atomos/Boton";
 import { Input } from "../componentes/atomos/Input";
 
-test("5. el botón muestra el texto Enviar", () => {
+afterEach(cleanup);
+
+test("1. renderiza un botón", () => {
   render(<Boton>Enviar</Boton>);
-  const boton = screen.getByRole("button", { name: "Enviar" });
-  expect(boton.textContent).toBe("Enviar");
+  expect(screen.getByRole("button")).toBeTruthy();
 });
 
-test("6. el botón responde al hacer clic", () => {
+test("2. muestra la etiqueta recibida por el botón", () => {
+  render(<Boton>Enviar</Boton>);
+  expect(screen.getByRole("button").textContent).toBe("Enviar");
+});
+
+test("3. ejecuta onClick al hacer clic en el botón", () => {
   const funcionClic = vi.fn();
   render(<Boton onClick={funcionClic}>Guardar</Boton>);
   const boton = screen.getByRole("button", { name: "Guardar" });
@@ -19,19 +25,22 @@ test("6. el botón responde al hacer clic", () => {
   expect(funcionClic).toHaveBeenCalledTimes(1);
 });
 
-test("7. el input muestra el placeholder correcto", () => {
-  render(<Input placeholder="Ingrese su nombre" value="" onChange={() => {}} />);
-  
-  const elementoInput = screen.getByPlaceholderText("Ingrese su nombre");
-  expect(elementoInput).not.toBeNull();
+test("4. renderiza un campo de texto", () => {
+  const { container } = render(<Input tipo="text" nombre="nombre" valor="" alCambiar={() => {}} />);
+  expect(container.querySelector("input")).toBeTruthy();
 });
 
-test("8. el input permite escribir texto", () => {
+test("5. entrega al input los props recibidos", () => {
   const funcionCambio = vi.fn();
-  render(<Input placeholder="Correo" value="" onChange={funcionCambio} />);
-  
-  const elementoInput = screen.getByPlaceholderText("Correo") as HTMLInputElement;
-  fireEvent.change(elementoInput, { target: { value: "test@correo.com" } });
-  
-  expect(funcionCambio).toHaveBeenCalled();
+  const { container } = render(
+    <Input tipo="email" nombre="correo" valor="laura@gmail.com" alCambiar={funcionCambio} maxLength={100} />,
+  );
+  const elementoInput = container.querySelector("input") as HTMLInputElement;
+
+  expect(elementoInput.type).toBe("email");
+  expect(elementoInput.name).toBe("correo");
+  expect(elementoInput.value).toBe("laura@gmail.com");
+  expect(elementoInput.maxLength).toBe(100);
+  fireEvent.change(elementoInput, { target: { value: "otro@correo.com" } });
+  expect(funcionCambio).toHaveBeenCalledWith("otro@correo.com");
 });

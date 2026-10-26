@@ -1,4 +1,5 @@
 import { ItemSeleccion } from '../moleculas/ItemSeleccion'
+import { formatearPrecio } from '../../utilidades'
 
 type ProductSelectionProps = {
   productos: { id: number; nombre: string; precio: number; imagen: string; descripcion: string }[]
@@ -17,7 +18,7 @@ export function SeleccionProductos({ productos, selection, onRemove }: ProductSe
       {selectedProducts.length === 0
         ? <p className="empty">Todavía no has agregado productos a tu selección.</p>
         : selectedProducts.map((product) => <ItemSeleccion key={product.id} product={product} onRemove={onRemove} />)}
-      <div className="total"><span>Total:</span><strong>${total.toLocaleString('es-CL')}</strong></div>
+      <div className="total"><span>Total:</span><strong>{formatearPrecio(total)}</strong></div>
     </section>
   )
 }

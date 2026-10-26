@@ -1,5 +1,6 @@
 import { Boton } from '../atomos/Boton'
 import { BotonLink } from '../atomos/BotonLink'
+import { formatearPrecio } from '../../utilidades'
 
 type Props = {
   product: { id: number; nombre: string; precio: number; imagen: string; descripcion: string }
@@ -13,7 +14,7 @@ export function ArticuloProducto({ product, onAdd }: Props) {
       <img src={product.imagen} alt={product.nombre} style={{ maxWidth: '20rem' }} />
       <h3>{product.nombre}</h3>
       <p>{product.descripcion}</p>
-      <p><strong>${product.precio.toLocaleString('es-CL')}</strong></p>
+      <p><strong>{formatearPrecio(product.precio)}</strong></p>
       <div className="d-flex flex-wrap gap-2">
         <BotonLink to="/productos" variante="secondary">Volver a Productos</BotonLink>
         <Boton onClick={() => onAdd(product.id)}>Agregar a selección</Boton>
