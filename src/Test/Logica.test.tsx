@@ -7,7 +7,7 @@ test("1. comprobar que 2 + 3 es igual a 5", () => {
 });
 
 test("2. comprobar que el formateo de un precio incluye el signo peso", () => {
-  expect(formatearPrecio(19990)).toBe("$19.990");
+  expect(formatearPrecio(19990)).toBe("$12.990");
 });
 
 test("3. comprobar que la validación de un correo devuelve falso si no tiene @", () => {
@@ -21,3 +21,4 @@ test("4. comprobar que la validación de correo devuelve verdadero si es correct
 test("ejemplo de error intencional", () => {
   expect(2 + 3).toBe(6);
 });
+
