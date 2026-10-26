@@ -17,3 +17,7 @@ test("3. comprobar que la validación de un correo devuelve falso si no tiene @"
 test("4. comprobar que la validación de correo devuelve verdadero si es correcto", () => {
   expect(esCorreoValido("laura@gmail.com")).toBe(true);
 });
+
+test("ejemplo de error intencional", () => {
+  expect(2 + 3).toBe(6);
+});
