@@ -1,37 +1,34 @@
-// @vitest-environment jsdom
-import { test, expect, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach } from "vitest";
 import { Boton } from "../componentes/atomos/Boton";
 import { Input } from "../componentes/atomos/Input";
 
 afterEach(cleanup);
 
-test("1. renderiza un botón", () => {
+it("1. renderiza un botón", () => {
   render(<Boton>Enviar</Boton>);
   expect(screen.getByRole("button")).toBeTruthy();
 });
 
-test("2. muestra la etiqueta recibida por el botón", () => {
+it("2. muestra la etiqueta recibida por el botón", () => {
   render(<Boton>Enviar</Boton>);
   expect(screen.getByRole("button").textContent).toBe("Enviar");
 });
 
-test("3. ejecuta onClick al hacer clic en el botón", () => {
-  const funcionClic = vi.fn();
+it("3. ejecuta onClick al hacer clic en el botón", () => {
+  const funcionClic = jasmine.createSpy("funcionClic");
   render(<Boton onClick={funcionClic}>Guardar</Boton>);
   const boton = screen.getByRole("button", { name: "Guardar" });
   fireEvent.click(boton);
   expect(funcionClic).toHaveBeenCalledTimes(1);
 });
 
-test("4. renderiza un campo de texto", () => {
+it("4. renderiza un campo de texto", () => {
   const { container } = render(<Input tipo="text" nombre="nombre" valor="" alCambiar={() => {}} />);
   expect(container.querySelector("input")).toBeTruthy();
 });
 
-test("5. entrega al input los props recibidos", () => {
-  const funcionCambio = vi.fn();
+it("5. entrega al input los props recibidos", () => {
+  const funcionCambio = jasmine.createSpy("funcionCambio");
   const { container } = render(
     <Input tipo="email" nombre="correo" valor="laura@gmail.com" alCambiar={funcionCambio} maxLength={100} />,
   );

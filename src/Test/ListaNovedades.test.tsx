@@ -1,6 +1,4 @@
-// @vitest-environment jsdom
 import { cleanup, render, within } from "@testing-library/react";
-import { afterEach, test, expect } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import { ListaNovedades } from "../componentes/organismos/ListaNovedades";
 import { TarjetaNovedad } from "../componentes/moleculas/TarjetaNoverdad";
@@ -39,12 +37,12 @@ function renderListaNovedades() {
   );
 }
 
-test("6. la lista renderiza todos los elementos recibidos", () => {
+it("6. la lista renderiza todos los elementos recibidos", () => {
   const { container } = renderListaNovedades();
-  expect(container.querySelectorAll(".news-card")).toHaveLength(novedades.length);
+  expect(container.querySelectorAll(".news-card").length).toBe(novedades.length);
 });
 
-test("7. cada elemento de la lista muestra su título y contenido", () => {
+it("7. cada elemento de la lista muestra su título y contenido", () => {
   const { container } = renderListaNovedades();
   const articulos = container.querySelectorAll(".news-card");
 
@@ -58,7 +56,7 @@ test("7. cada elemento de la lista muestra su título y contenido", () => {
   });
 });
 
-test("8. la tarjeta de novedad renderiza los datos recibidos", () => {
+it("8. la tarjeta de novedad renderiza los datos recibidos", () => {
   const novedad = novedades[0];
   const { container } = render(
     <MemoryRouter>
