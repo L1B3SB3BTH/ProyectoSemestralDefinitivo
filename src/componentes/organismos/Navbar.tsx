@@ -4,12 +4,13 @@ import { EnlaceNav } from '../atomos/EnlaceNav'
 type SiteHeaderProps = { selectionCount: number }
 
 export function Navbar({ selectionCount }: SiteHeaderProps) {
+  // El contador refleja unidades totales, también cuando se repite un producto.
   const links = [
     { label: 'Inicio', to: '/', end: true },
     { label: 'Productos', to: '/productos' },
     { label: 'Nosotros', to: '/nosotros' },
     { label: 'Novedades', to: '/novedades' },
-    { label: `Selección (${selectionCount})`, to: '/seleccion' },
+    { label: `Carrito (${selectionCount})`, to: '/seleccion' },
     { label: 'Contacto', to: '/contacto' },
     { label: 'Registrarse', to: '/registro' },
     { label: 'Login', to: '/login' },

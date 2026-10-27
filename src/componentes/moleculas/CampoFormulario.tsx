@@ -8,16 +8,16 @@ type Props = {
   alCambiar: (valor: string) => void
   maxLength?: number
   filas?: number
+  error?: string
 }
 
-// Molécula: etiqueta + Input
-export function CampoFormulario({ etiqueta, tipo, nombre, valor, alCambiar, maxLength, filas }: Props) {
+// Combina etiqueta, campo reutilizable y mensaje de validación asociado.
+export function CampoFormulario({ etiqueta, tipo, nombre, valor, alCambiar, maxLength, filas, error }: Props) {
   return (
-    <div className="mb-3">
-      <label className="form-label">
-        {etiqueta}
-        <Input tipo={tipo} nombre={nombre} valor={valor} alCambiar={alCambiar} maxLength={maxLength} filas={filas} />
-      </label>
+    <div className="field-group mb-3">
+      <label className="form-label" htmlFor={nombre}>{etiqueta}</label>
+      <Input tipo={tipo} nombre={nombre} valor={valor} alCambiar={alCambiar} maxLength={maxLength} filas={filas} error={error} />
+      {error && <span className="field-error" id={`${nombre}-error`}>{error}</span>}
     </div>
   )
 }

@@ -430,20 +430,58 @@ const regiones: { nombre: string; comunas: string[] }[] = [
 
 export function FormularioRegistro() {
   const [regionIndex, setRegionIndex] = useState('')
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const [message, setMessage] = useState('')
+  // Carga el perfil previo para mostrarlo incluso después de volver a abrir la página.
+  const [registeredUser, setRegisteredUser] = useState<Record<string, string> | null>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('sonidoVivoUsuario') || 'null') as Record<string, string> | null
+    } catch {
+      return null
+    }
+  })
   const comunas = regionIndex === '' ? [] : regiones[Number(regionIndex)]?.comunas ?? []
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
-    const run = String(data.get('run') || '').trim()
-    const required = ['nombre', 'apellido', 'correo', 'tipoUsuario', 'region', 'comuna', 'direccion']
-      .some((key) => !String(data.get(key) || '').trim())
+    const values = Object.fromEntries(data.entries()) as Record<string, string>
+    // Los mensajes de este mapa se pasan a cada campo para mostrarse debajo del input.
+    const nextErrors: Record<string, string> = {}
+    const requiredFields: Record<string, string> = {
+      run: 'Ingresa tu RUN sin puntos ni guion.',
+      nombre: 'Ingresa tu nombre.',
+      apellido: 'Ingresa tus apellidos.',
+      correo: 'Ingresa tu correo electrónico.',
+      tipoUsuario: 'Selecciona el tipo de usuario.',
+      region: 'Selecciona tu región.',
+      comuna: 'Selecciona tu comuna.',
+      direccion: 'Ingresa tu dirección.',
+    }
 
-    if (required) return setMessage('Falta completar uno o más campos obligatorios.')
-    if (!/^[0-9]+[0-9Kk]$/.test(run)) return setMessage('El RUN ingresado no es válido.')
+    for (const [field, helpText] of Object.entries(requiredFields)) {
+      if (!values[field]?.trim()) nextErrors[field] = helpText
+    }
+    if (values.run?.trim() && !/^[0-9]+[0-9Kk]$/.test(values.run.trim())) {
+      nextErrors.run = 'Usa solo números y termina con un número o K, sin puntos ni guion.'
+    }
+    if (values.nombre?.trim() && values.nombre.trim().length < 2) {
+      nextErrors.nombre = 'El nombre debe tener al menos 2 caracteres.'
+    }
+    if (values.correo?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.correo.trim())) {
+      nextErrors.correo = 'Revisa el formato. Ejemplo: nombre@correo.cl.'
+    }
 
-    setMessage('Usuario registrado correctamente.')
+    setErrors(nextErrors)
+    if (Object.keys(nextErrors).length > 0) {
+      setMessage('Revisa los campos marcados para continuar.')
+      return
+    }
+
+    // Guarda el registro en este navegador; no se envía al servidor desde el frontend.
+    localStorage.setItem('sonidoVivoUsuario', JSON.stringify(values))
+    setRegisteredUser(values)
+    setMessage('Registro guardado. Tus datos aparecen en el resumen.')
     event.currentTarget.reset()
     setRegionIndex('')
   }
@@ -458,34 +496,54 @@ export function FormularioRegistro() {
   ]
 
   return (
-    <TarjetaFormulario title="Registro de Usuario">
-      <form onSubmit={submit}>
-        <CampoTexto label="RUN (sin puntos ni guion):" name="run" maxLength={9} />
-        <CampoTexto label="Nombre:" name="nombre" maxLength={50} />
-        <CampoTexto label="Apellidos:" name="apellido" maxLength={100} />
-        <CampoTexto label="Correo electrónico:" name="correo" type="email" maxLength={100} />
-        <CampoTexto label="Fecha de nacimiento (opcional):" name="fechaNacimiento" type="date" />
-        <Selector
-          label="Tipo de usuario:"
-          name="tipoUsuario"
-          options={[
-            { value: '', label: 'Seleccione un tipo' },
-            { value: 'cliente', label: 'Cliente' },
-            { value: 'administrador', label: 'Administrador' },
-          ]}
-        />
-        <Selector
-          label="Región:"
-          name="region"
-          value={regionIndex}
-          onChange={setRegionIndex}
-          options={regionOptions}
-        />
-        <Selector label="Comuna:" name="comuna" options={comunaOptions} />
-        <CampoTexto label="Dirección:" name="direccion" maxLength={300} />
-        <p className="form-message" aria-live="polite">{message}</p>
-        <Boton type="submit">Registrar</Boton>
-      </form>
-    </TarjetaFormulario>
+    <div className="registration-layout">
+      <TarjetaFormulario title="Crea tu cuenta">
+        <p className="form-intro">Completa tus datos para guardar tu perfil en este dispositivo.</p>
+        <form onSubmit={submit} noValidate>
+          <CampoTexto label="RUN (sin puntos ni guion)" name="run" maxLength={9} error={errors.run} />
+          <CampoTexto label="Nombre" name="nombre" maxLength={50} error={errors.nombre} />
+          <CampoTexto label="Apellidos" name="apellido" maxLength={100} error={errors.apellido} />
+          <CampoTexto label="Correo electrónico" name="correo" type="email" maxLength={100} error={errors.correo} />
+          <CampoTexto label="Fecha de nacimiento (opcional)" name="fechaNacimiento" type="date" />
+          <Selector
+            label="Tipo de usuario"
+            name="tipoUsuario"
+            error={errors.tipoUsuario}
+            options={[
+              { value: '', label: 'Seleccione un tipo' },
+              { value: 'cliente', label: 'Cliente' },
+              { value: 'administrador', label: 'Administrador' },
+            ]}
+          />
+          <Selector
+            label="Región"
+            name="region"
+            value={regionIndex}
+            onChange={setRegionIndex}
+            error={errors.region}
+            options={regionOptions}
+          />
+          <Selector label="Comuna" name="comuna" error={errors.comuna} options={comunaOptions} />
+          <CampoTexto label="Dirección" name="direccion" maxLength={300} error={errors.direccion} />
+          <p className={`form-message ${Object.keys(errors).length ? 'has-errors' : ''}`} role={Object.keys(errors).length ? 'alert' : 'status'} aria-live="polite">{message}</p>
+          <Boton type="submit">Registrar mis datos</Boton>
+        </form>
+      </TarjetaFormulario>
+      <aside className="profile-panel" aria-live="polite">
+        <p className="eyebrow">PERFIL LOCAL</p>
+        <h2>{registeredUser ? 'Datos guardados' : 'Tu perfil aparecerá aquí'}</h2>
+        {registeredUser ? (
+          <dl>
+            <dt>Nombre</dt><dd>{[registeredUser.nombre, registeredUser.apellido].filter(Boolean).join(' ')}</dd>
+            <dt>Correo</dt><dd>{registeredUser.correo}</dd>
+            <dt>RUN</dt><dd>{registeredUser.run}</dd>
+            <dt>Dirección</dt><dd>{registeredUser.direccion}, {registeredUser.comuna}</dd>
+            <dt>Región</dt><dd>{regiones[Number(registeredUser.region)]?.nombre}</dd>
+          </dl>
+        ) : (
+          <p>Al registrar el formulario, tus datos se guardarán en este navegador y podrás verlos aquí.</p>
+        )}
+      </aside>
+    </div>
   )
 }

@@ -74,6 +74,7 @@ const novedades = [
 ]
 
 function AppContent() {
+  // El carrito se inicia con lo guardado para que sobreviva al cerrar o recargar la página.
   const [selection, setSelection] = useState<number[]>(() => {
     try {
       return JSON.parse(localStorage.getItem(selectionKey) || '[]') as number[]
@@ -86,8 +87,15 @@ function AppContent() {
     localStorage.setItem(selectionKey, JSON.stringify(selection))
   }, [selection])
 
-  const add = (id: number) => setSelection((current) => current.includes(id) ? current : [...current, id])
-  const remove = (id: number) => setSelection((current) => current.filter((item) => item !== id))
+  // Cada ID representa una unidad; repetirlo aumenta la cantidad del mismo producto.
+  const add = (id: number) => setSelection((current) => [...current, id])
+  const remove = (id: number) => setSelection((current) => {
+    // Quita una sola unidad, no todas las unidades del producto.
+    const index = current.lastIndexOf(id)
+    return index === -1 ? current : current.filter((_, itemIndex) => itemIndex !== index)
+  })
+  // El checkout es de demostración: confirma la acción vaciando el carrito, sin cobrar.
+  const checkout = () => setSelection([])
 
   return (
     <>
@@ -100,7 +108,7 @@ function AppContent() {
         <Route path="/nosotros" element={<Nosotros />} />
         <Route path="/novedades" element={<Novedades novedades={novedades} />} />
         <Route path="/novedades/:id" element={<DetalleNovedad novedades={novedades} />} />
-        <Route path="/seleccion" element={<Seleccion productos={productos} selection={selection} onRemove={remove} />} />
+        <Route path="/seleccion" element={<Seleccion productos={productos} selection={selection} onAdd={add} onRemove={remove} onCheckout={checkout} />} />
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />

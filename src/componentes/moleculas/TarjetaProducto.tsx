@@ -18,7 +18,7 @@ export function TarjetaProducto({ product, onAdd }: ProductCardProps) {
         <strong>{formatearPrecio(product.precio)}</strong>
         <div className="d-flex flex-wrap gap-2 mt-auto">
           <BotonLink to={`/productos/${product.id}`}>Ver detalle</BotonLink>
-          <Boton onClick={() => onAdd(product.id)}>Agregar a selección</Boton>
+          <Boton onClick={() => onAdd(product.id)}>Agregar al carrito</Boton>
         </div>
       </div>
     </article>
