@@ -8,9 +8,12 @@ export function FormularioLogin() {
   // Estado para guardar los datos del formulario
   const [correo, setCorreo] = useState('')
   const [clave, setClave] = useState('')
+  const [tipoAcceso, setTipoAcceso] = useState<'cliente' | 'administrador'>('cliente')
+  const [mensaje, setMensaje] = useState('')
 
   const manejarEnvio = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault() // evita recargar la página
+    setMensaje('')
 
     if (correo.trim() === '') {
       alert('Debe ingresar su correo')
@@ -33,14 +36,38 @@ export function FormularioLogin() {
       return
     }
 
-    alert('Datos ingresados correctamente')
+    setMensaje(`Modo de acceso seleccionado: ${tipoAcceso === 'administrador' ? 'Administrador' : 'Cliente'}. El acceso real requiere validar la cuenta en un servidor.`)
   }
 
   return (
     <TarjetaFormulario title="Iniciar sesión">
       <form onSubmit={manejarEnvio} noValidate>
+        <fieldset className="field-group access-role">
+          <legend>Entrar como</legend>
+          <label>
+            <input
+              type="radio"
+              name="tipoAcceso"
+              value="cliente"
+              checked={tipoAcceso === 'cliente'}
+              onChange={() => setTipoAcceso('cliente')}
+            />
+            Cliente
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="tipoAcceso"
+              value="administrador"
+              checked={tipoAcceso === 'administrador'}
+              onChange={() => setTipoAcceso('administrador')}
+            />
+            Administrador
+          </label>
+        </fieldset>
         <CampoFormulario etiqueta="Correo electrónico:" tipo="email" nombre="correo" valor={correo} alCambiar={setCorreo} maxLength={100} />
         <CampoFormulario etiqueta="Contraseña:" tipo="password" nombre="clave" valor={clave} alCambiar={setClave} maxLength={50} />
+        <p className="form-message" role="status" aria-live="polite">{mensaje}</p>
         <Boton type="submit">Ingresar</Boton>
       </form>
     </TarjetaFormulario>
