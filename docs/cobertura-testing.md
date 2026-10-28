@@ -2,21 +2,21 @@
 
 ## Ejecución
 
-- Fecha de generación: 27 de octubre de 2026.
-- Runner: Karma 6 con Jasmine 7, ejecutado en jsdom.
-- Comando: `npm test` (equivalente a `npm run test:coverage`).
+- Fecha de generación: 28 de octubre de 2026.
+- Runner: Vitest 5, ejecutado en jsdom.
+- Comandos: `npm test` para ejecutar las pruebas, `npm run test:watch` para modo interactivo y `npm run test:coverage` para generar cobertura.
 - Resultado: 23 de 23 pruebas aprobadas en 6 archivos.
 - Alcance medido: componentes de `src/componentes` y funciones de `src/utilidades.ts`.
-- Instrumentación: Babel Istanbul; los archivos de prueba no se incluyen en el cálculo.
+- Instrumentación: proveedor V8 de Vitest; los archivos de prueba no se incluyen en el cálculo.
 
 ## Resultado global
 
 | Métrica | Cubierto | Total | Cobertura |
 | --- | ---: | ---: | ---: |
-| Sentencias | 75 | 90 | 83,33 % |
-| Ramas | 45 | 54 | 83,33 % |
-| Funciones | 26 | 29 | 89,65 % |
-| Líneas | 70 | 82 | 85,36 % |
+| Sentencias | 75 | 151 | 49,66 % |
+| Ramas | 45 | 103 | 43,68 % |
+| Funciones | 26 | 56 | 46,42 % |
+| Líneas | 70 | 142 | 49,29 % |
 
 ## Archivos cubiertos
 
@@ -36,7 +36,7 @@
 
 ## Archivos sin cobertura
 
-Los siguientes 15 componentes no aparecen en el reporte, por lo que actualmente no tienen pruebas que los ejecuten:
+Los siguientes 15 componentes aparecen con 0 % de cobertura, por lo que actualmente no tienen pruebas que los ejecuten:
 
 - Átomos: `BotonLink.tsx`, `CampoTexto.tsx`, `EnlaceNav.tsx`, `Selector.tsx`.
 - Moléculas: `TarjetaProducto.tsx`.
@@ -55,4 +55,4 @@ Los siguientes 15 componentes no aparecen en el reporte, por lo que actualmente 
 - Datos JSON por archivo: `coverage/coverage-final.json`.
 - Resumen de texto: salida del comando `npm test`.
 
-Al ejecutar `npm test`, Karma vuelve a generar los reportes en la carpeta `coverage/`.
+Al ejecutar `npm run test:coverage`, Vitest vuelve a generar los reportes en la carpeta `coverage/`.

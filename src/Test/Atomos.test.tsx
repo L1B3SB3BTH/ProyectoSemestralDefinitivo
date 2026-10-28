@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { vi } from "vitest";
 import { Boton } from "../componentes/atomos/Boton";
 import { Input } from "../componentes/atomos/Input";
 
@@ -15,7 +16,7 @@ it("2. muestra la etiqueta recibida por el botón", () => {
 });
 
 it("3. ejecuta onClick al hacer clic en el botón", () => {
-  const funcionClic = jasmine.createSpy("funcionClic");
+  const funcionClic = vi.fn();
   render(<Boton onClick={funcionClic}>Guardar</Boton>);
   const boton = screen.getByRole("button", { name: "Guardar" });
   fireEvent.click(boton);
@@ -28,7 +29,7 @@ it("4. renderiza un campo de texto", () => {
 });
 
 it("5. entrega al input los props recibidos", () => {
-  const funcionCambio = jasmine.createSpy("funcionCambio");
+  const funcionCambio = vi.fn();
   const { container } = render(
     <Input tipo="email" nombre="correo" valor="laura@gmail.com" alCambiar={funcionCambio} maxLength={100} />,
   );

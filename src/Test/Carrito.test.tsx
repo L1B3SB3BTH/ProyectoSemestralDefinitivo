@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { vi } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import { SeleccionProductos } from '../componentes/organismos/SeleccionProductos'
 
@@ -9,11 +10,11 @@ const productos = [
 ]
 
 it('confirma el pago de demostración y solicita vaciar el carrito', () => {
-  const onCheckout = jasmine.createSpy('onCheckout')
+  const onCheckout = vi.fn()
 
   render(
     <MemoryRouter>
-      <SeleccionProductos productos={productos} selection={[1, 1]} onAdd={jasmine.createSpy('onAdd')} onRemove={jasmine.createSpy('onRemove')} onCheckout={onCheckout} />
+      <SeleccionProductos productos={productos} selection={[1, 1]} onAdd={vi.fn()} onRemove={vi.fn()} onCheckout={onCheckout} />
     </MemoryRouter>,
   )
 
@@ -26,7 +27,7 @@ it('confirma el pago de demostración y solicita vaciar el carrito', () => {
 it('no muestra la opción de pago con el carrito vacío', () => {
   render(
     <MemoryRouter>
-      <SeleccionProductos productos={productos} selection={[]} onAdd={jasmine.createSpy('onAdd')} onRemove={jasmine.createSpy('onRemove')} onCheckout={jasmine.createSpy('onCheckout')} />
+      <SeleccionProductos productos={productos} selection={[]} onAdd={vi.fn()} onRemove={vi.fn()} onCheckout={vi.fn()} />
     </MemoryRouter>,
   )
 
